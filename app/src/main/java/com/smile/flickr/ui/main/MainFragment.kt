@@ -1,5 +1,7 @@
 package com.smile.flickr.ui.main
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -11,6 +13,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.smile.domain.TagMode
+import com.smile.domain.entity.Flickr
 import com.smile.flickr.*
 import com.smile.flickr.databinding.FragmentMainBinding
 import kotlinx.coroutines.launch
@@ -62,17 +66,51 @@ class MainFragment : Fragment() {
             layoutManager = gridLayoutManager
             adapter = flickrAdapter
         }
+        initViews()
+    }
+
+    private fun initViews() {
         observeFlickrFlow()
         setListeners()
         setMenu()
+        initToggleView()
+        with(binding.refresh) {
+            setOnRefreshListener {
+                isRefreshing = true
+                viewModel.getUIFeed(isRefresh = true)
+            }
+        }
     }
 
-    private fun showFullView(url: String) {
-        requireActivity().supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.container, ViewFragment.newInstance(url), VIEW_MORE)
-            .addToBackStack(null)
-            .commit()
+    private fun initToggleView() {
+        with(binding.tagMode) {
+            isChecked = viewModel.tagMode.getToggleValue()
+            setOnCheckedChangeListener { _, isChecked ->
+                viewModel.tagMode = if (isChecked) TagMode.ANY else
+                    TagMode.ALL
+            }
+        }
+    }
+
+    private fun showFullView(flickr: Flickr, event: FlickrEvent) {
+        when (event) {
+            FlickrEvent.Browser -> {
+                val webpage: Uri = Uri.parse(flickr.link)
+                val intent = Intent(Intent.ACTION_VIEW, webpage)
+                startActivity(intent)
+            }
+            FlickrEvent.FullScreen -> {
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(
+                        R.id.container,
+                        ViewFragment.newInstance(flickr.link, flickr.author),
+                        VIEW_MORE
+                    )
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
     }
 
     private fun setMenu() {
@@ -101,7 +139,8 @@ class MainFragment : Fragment() {
             if (action == EditorInfo.IME_ACTION_GO) {
                 val searchTerm = textView.text
                 if (searchTerm.isNotBlank()) {
-                    val queryParam = searchTerm.replace(Regex("/s"), ",")
+                    val queryParam = searchTerm.replace("\\s".toRegex(), ",")
+                    flickrAdapter.reset()
                     viewModel.getUIFeed(queryParam)
                 }
                 return@setOnEditorActionListener true
@@ -118,7 +157,14 @@ class MainFragment : Fragment() {
                         Snackbar.make(binding.main, "Try a search term", Snackbar.LENGTH_SHORT)
                             .show()
                     }
+
+                    is FlickrUI.Loading -> {
+                        binding.loader.visibility = View.VISIBLE
+                    }
+
                     is FlickrUI.UIData -> {
+                        binding.loader.visibility = View.GONE
+                        binding.refresh.isRefreshing = false
                         if (it.uiList.isEmpty()) {
                             Snackbar.make(
                                 binding.main,
@@ -131,6 +177,7 @@ class MainFragment : Fragment() {
                         }
                     }
                     is FlickrUI.Error -> {
+                        binding.loader.visibility = View.GONE
                         Snackbar.make(binding.main, "Error getting feed", Snackbar.LENGTH_SHORT)
                             .show()
                     }
@@ -139,3 +186,5 @@ class MainFragment : Fragment() {
         }
     }
 }
+
+fun TagMode.getToggleValue(): Boolean = this == TagMode.ANY

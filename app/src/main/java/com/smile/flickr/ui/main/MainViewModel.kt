@@ -8,6 +8,7 @@ import com.past3.ketro.kcore.model.KResponse
 import com.smile.data.FlickrDataSourceFactory
 import com.smile.domain.ErrorClass
 import com.smile.domain.FlickrDataSource
+import com.smile.domain.TagMode
 import com.smile.domain.parseToErrorClass
 import com.smile.flickr.FlickrUI
 import kotlinx.coroutines.CoroutineDispatcher
@@ -16,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 
 class MainViewModel(
     private val flickrData: FlickrDataSource = FlickrDataSourceFactory.dataSource(),
@@ -25,10 +27,17 @@ class MainViewModel(
     private val _flickrUIFlow: MutableStateFlow<FlickrUI> = MutableStateFlow(FlickrUI.Init)
     val flickrUIFlow = _flickrUIFlow as StateFlow<FlickrUI>
 
+    var tagMode: TagMode = TagMode.ALL
+    private var searchTerm: String = ""
 
-    fun getUIFeed(tags: String) {
+    fun getUIFeed(tags: String = searchTerm, isRefresh: Boolean = false) {
+        searchTerm = tags
         viewModelScope.launch(handler() + dispatcher) {
-            when (val feed = flickrData.getFeed(tags)) {
+            if (isRefresh.not()) {
+                _flickrUIFlow.value = FlickrUI.Loading
+            }
+            when (val feed =
+                flickrData.getFeed(tags, tagMode.name.lowercase(Locale.getDefault()))) {
                 is KResponse.Success -> {
                     _flickrUIFlow.value = FlickrUI.UIData(feed.data ?: emptyList())
                 }

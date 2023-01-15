@@ -8,11 +8,16 @@ import com.smile.domain.entity.Flickr
 internal object FlickerMapper : KMapper<FlickrResponse, List<Flickr>>() {
 
     override fun mapFrom(from: FlickrResponse): List<Flickr> {
-        return from.items.map {
+        val flickrList = from.items.map {
             Flickr(
                 title = it.title,
-                link = it.media.m
+                link = it.media.m,
+                date = it.dateTaken,
+                author = it.author
             )
+        }
+        return flickrList.sortedBy {
+            it.date
         }
     }
 }

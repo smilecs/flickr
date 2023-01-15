@@ -13,10 +13,10 @@ internal class FlickrDataSourceImpl(
         NetModule.retrofit.create(FlickrApi::class.java)
 ) : FlickrDataSource {
 
-    override suspend fun getFeed(tags: String): KResponse<List<Flickr>> {
+    override suspend fun getFeed(tags: String, tagMode: String): KResponse<List<Flickr>> {
         val req = object : Request<FlickrResponse>(GeneralErrorHandler()) {
             override suspend fun apiRequest(): Response<out FlickrResponse> =
-                flickrApi.getFeed(tags = tags)
+                flickrApi.getFeed(tags = tags, tagmode = tagMode)
         }.execute()
 
         return FlickerMapper.mapObject(req)

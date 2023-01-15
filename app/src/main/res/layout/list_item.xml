@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginTop="24dp">
+    android:layout_marginTop="24dp"
+    android:layout_marginEnd="8dp">
 
     <ImageView
         android:id="@+id/listImage"
@@ -30,5 +30,37 @@
         app:layout_constraintStart_toStartOf="@id/listImage"
         app:layout_constraintTop_toBottomOf="@id/listImage"
         tools:text="Test Text" />
+
+    <TextView
+        android:id="@+id/dateTaken"
+        style="@style/TextAppearance.Material3.BodyLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        tools:text="2022-22-10" />
+
+    <Button
+        android:id="@+id/view_on_browser"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/view_on_browser"
+        app:layout_constraintEnd_toStartOf="@+id/view_on_full_screen"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateTaken" />
+
+    <Button
+        android:id="@+id/view_on_full_screen"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/view_on_fullscreen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/view_on_browser"
+        app:layout_constraintTop_toTopOf="@+id/view_on_browser" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

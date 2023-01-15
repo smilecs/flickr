@@ -7,6 +7,8 @@ sealed class FlickrUI {
 
     object Init : FlickrUI()
 
+    object Loading : FlickrUI()
+
     class UIData(val uiList: List<Flickr>) : FlickrUI()
 
     class Error(val errorClass: ErrorClass) : FlickrUI()

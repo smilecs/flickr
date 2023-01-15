@@ -5,5 +5,5 @@ import com.smile.domain.entity.Flickr
 
 interface FlickrDataSource {
 
-    suspend fun getFeed(tags: String): KResponse<List<Flickr>>
+    suspend fun getFeed(tags: String, tagMode: String): KResponse<List<Flickr>>
 }

@@ -5,11 +5,12 @@ import com.past3.ketro.kcore.model.StatusCode
 import com.smile.domain.FlickrDataSource
 import com.smile.domain.entity.Flickr
 import java.io.IOException
+import java.util.*
 
 
 object TestFailureDataSource : FlickrDataSource {
 
-    override suspend fun getFeed(tags: String): KResponse<List<Flickr>> {
+    override suspend fun getFeed(tags: String, tagMode: String): KResponse<List<Flickr>> {
         return KResponse.Failure(exception = Exception(), statusCode = StatusCode(503))
     }
 }
@@ -17,14 +18,14 @@ object TestFailureDataSource : FlickrDataSource {
 
 object TestThrownException : FlickrDataSource {
 
-    override suspend fun getFeed(tags: String): KResponse<List<Flickr>> {
+    override suspend fun getFeed(tags: String, tagMode: String): KResponse<List<Flickr>> {
         throw IOException()
     }
 }
 
 object TestSuccessDataSource : FlickrDataSource {
 
-    override suspend fun getFeed(tags: String): KResponse<List<Flickr>> {
-        return KResponse.Success(listOf(Flickr("Test", "")), StatusCode(200))
+    override suspend fun getFeed(tags: String, tagMode: String): KResponse<List<Flickr>> {
+        return KResponse.Success(listOf(Flickr("Test", "", Date(), "")), StatusCode(200))
     }
 }

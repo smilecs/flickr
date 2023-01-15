@@ -10,6 +10,7 @@ internal interface FlickrApi {
     suspend fun getFeed(
         @Query("format") format: String = "json",
         @Query("nojsoncallback") callback: String = "1",
-        @Query("tags") tags: String
+        @Query("tagmode") tagmode: String,
+        @Query("tags") tags: String,
     ): Response<FlickrResponse>
 }

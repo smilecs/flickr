@@ -13,11 +13,13 @@ import kotlin.properties.Delegates
 
 
 private const val ARG_PARAM = "param"
+private const val ARG_AUTHOR = "author"
 const val VIEW_MORE = "view_more"
 
 class ViewFragment : Fragment() {
 
     private var param1: String? = null
+    private var author: String? = null
 
     private var binding: FragmentViewBinding by Delegates.notNull()
 
@@ -28,6 +30,7 @@ class ViewFragment : Fragment() {
 
         arguments?.let {
             param1 = it.getString(ARG_PARAM)
+            author = it.getString(ARG_AUTHOR)
         }
     }
 
@@ -48,15 +51,18 @@ class ViewFragment : Fragment() {
             .target(binding.flickrImage)
             .build()
         imageLoader.enqueue(request)
+
+        binding.author.text = author
     }
 
 
     companion object {
 
-        fun newInstance(url: String) =
+        fun newInstance(url: String, author: String) =
             ViewFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM, url)
+                    putString(ARG_AUTHOR, author)
                 }
             }
     }

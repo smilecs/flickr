@@ -4,4 +4,8 @@
     <string name="change_orientation">Change Orientation</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="view_on_browser">View on browser</string>
+    <string name="view_on_fullscreen">View on fullScreen</string>
+    <string name="tag_mode_all">Tag Mode:ALL</string>
+    <string name="tag_mode_any">Tag mode : ANY</string>
 </resources>
